@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "programs/*"
+    "programs/payroll_program"
 ]
 resolver = "2"
 

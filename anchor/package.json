@@ -3,7 +3,7 @@
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
-    "build": "anchor build"
+    "build": "cargo build --release --manifest-path programs/payroll_program/Cargo.toml && cargo build --release --features idl-build --manifest-path programs/payroll_program/Cargo.toml"
   },
   "dependencies": {
     "@coral-xyz/anchor": "0.32.1"
