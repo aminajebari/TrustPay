@@ -22,7 +22,7 @@ const ParticleBackground = () => {
             color: string;
         }> = [];
 
-        const colors = ['#DC1FFF', '#00FFA3', '#03E1FF'];
+        const colors = ['#1A56DB', '#3B82F6', '#60A5FA'];
 
         for (let i = 0; i < 50; i++) {
             particles.push({

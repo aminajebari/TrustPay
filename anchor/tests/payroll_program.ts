@@ -7,10 +7,13 @@ import { PublicKey, Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { assert } from 'chai'
 
 describe('Payroll Program - Comprehensive Tests', () => {
+  //provider connects us to the blockchain (local or devnet)
   const provider = anchor.AnchorProvider.env()
   anchor.setProvider(provider)
 
+  // We bind the compiled program to the provider
   const program = anchor.workspace.PayrollProgram as Program<PayrollProgram>
+  // authority is the account that will sign transactions (our wallet)
   const authority = provider.wallet as anchor.Wallet
 
   // Test data
@@ -57,6 +60,7 @@ describe('Payroll Program - Comprehensive Tests', () => {
     )
 
     // Derive Worker PDAs
+    // Seeds : 'worker' + org address + worker public
     ;[worker1Pda] = PublicKey.findProgramAddressSync(
       [Buffer.from('worker'), orgPda.toBuffer(), worker1.publicKey.toBuffer()],
       program.programId

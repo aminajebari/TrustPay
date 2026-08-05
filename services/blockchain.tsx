@@ -36,7 +36,8 @@ const idl = idlJson as PayrollProgram
 
 const PROGRAM_ID = new PublicKey(idlJson.address)
 const CLUSTER: string = process.env.NEXT_PUBLIC_CLUSTER || 'devnet'
-const RPC_URL: string = getClusterURL(CLUSTER)
+const RPC_URL: string =
+    process.env.NEXT_PUBLIC_RPC_URL || getClusterURL(CLUSTER)
 
 console.log('Cluster:', CLUSTER);
 console.log('RPC URL:', RPC_URL);
@@ -64,9 +65,10 @@ export const getProvider = (
         console.error('Invalid RPC URL:', RPC_URL)
         throw new Error(`Invalid RPC endpoint: ${RPC_URL}. It must start with http: or https:. Check NEXT_PUBLIC_CLUSTER env var.`)
     }
-
+    //Create connection to Solana cluster
     const connection = new Connection(RPC_URL, 'confirmed')
 
+    //Create wallet object compatible with anchor
     const wallet: SignerWallet = {
         publicKey,
         signTransaction,
@@ -79,12 +81,13 @@ export const getProvider = (
         },
     }
 
+    //Create provider with connection and wallet
     const provider = new AnchorProvider(
         connection,
         wallet as unknown as Wallet,
         { commitment: 'processed' }
     )
-
+    //Create program instance
     return new Program(idl, provider)
 }
 

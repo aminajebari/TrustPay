@@ -30,9 +30,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": [
-    "node_modules",
-    "anchor",           // ←←← ADD THIS LINE
-    "anchor/**"         // ←←← AND THIS (covers everything inside)
-  ]
+  "exclude": ["node_modules", "anchor"]
 }

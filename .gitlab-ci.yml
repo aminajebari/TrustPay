@@ -1,0 +1,63 @@
+variables:
+  IMAGE_NAME: registry.gitlab.com/eyaiscoding-group/trustpay/app
+
+stages:
+  - build
+  - Build & docker image
+  - deploy
+
+
+yarn_job:
+  stage: build
+  tags:
+    - yarn
+  script:
+    - yarn install --frozen-lockfile
+    - yarn build
+    - mkdir -p pkg
+    - cp -r .next pkg/
+    - cp -r public pkg/
+  artifacts:
+    paths:
+      - pkg/
+  cache:
+    paths:
+      - node_modules/
+      - .yarn/cache
+
+
+docker_job:
+  stage: Build & docker image
+  tags:
+    - yarn
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
+    - docker push $IMAGE_NAME:latest
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+  dependencies:
+    - yarn_job
+
+deploy_job:
+  stage: deploy
+  tags:
+    - yarn
+  script:
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keygen -y -f ~/.ssh/id_rsa
+    - ssh-keyscan -H $ANSIBLE_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - |
+      ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
+        $ANSIBLE_USER@$ANSIBLE_HOST \
+        "CI_REGISTRY_USER=$CI_REGISTRY_USER \
+         CI_REGISTRY_PASSWORD=$CI_REGISTRY_PASSWORD \
+         ansible-playbook -i $ANSIBLE_PLAYBOOK_PATH/hosts \
+         $ANSIBLE_PLAYBOOK_PATH/master.yml"
+  dependencies:
+    - docker_job
+  only:
+    - main

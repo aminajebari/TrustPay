@@ -4,8 +4,8 @@ import './globals.css'
 import ClientProviders from '@/components/ClientProviders'
 
 export const metadata: Metadata = {
-  title: 'DappPay',
-  description: 'AI-Powered Payroll on Solana',
+  title: 'TrustPay',
+  description: 'Type. Pay. Trust. — AI-Powered Payroll on Solana',
 }
 
 export default function RootLayout({
